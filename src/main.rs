@@ -1,3 +1,3 @@
 fn main() {
-    cargo_template::run();
+    println!("Hello, world!");
 }
