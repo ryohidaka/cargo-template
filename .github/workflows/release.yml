@@ -1,18 +1,23 @@
 name: release
 
 on:
-  push:
-    tags:
-      - "v*.*.*"
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
 
 jobs:
-  build:
+  publish:
+    if: |
+      github.event_name == 'pull_request' && github.event.pull_request.merged == true ||
+      github.event_name == 'workflow_run'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: softprops/action-gh-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-      - run: cargo publish
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Publish to crate.io
+        run: cargo publish
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
